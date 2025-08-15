@@ -33,6 +33,8 @@ export default function SignIn() {
       router.push('/phone-verify');
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -45,7 +47,7 @@ export default function SignIn() {
         </p>
         <form onSubmit={handleSubmit}>
           <input
-            type="text"
+            type="number"
             placeholder="Your Phone Number"
             className="input"
             onChange={(e) => setPhone(e.target.value)}
