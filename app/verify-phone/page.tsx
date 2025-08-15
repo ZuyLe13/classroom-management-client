@@ -16,14 +16,16 @@ export default function PhoneVerify() {
     const storedPhone = localStorage.getItem('phone');
     if (storedPhone) {
       setPhone(storedPhone);
+    } else {
+      router.push('/sign-in');
     }
-  }, []);
+  }, [router]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const trimmedAccessCode = accessCode.replace(/\s+/g, '');
 
-    if (trimmedAccessCode.length !== 6 || !/^[0-9]+$/.test(trimmedAccessCode)) {
+    if (trimmedAccessCode.length !== 6) {
       setError(errorMessages.INVALID_ACCESS_CODE);
       return;
     }
@@ -39,6 +41,8 @@ export default function PhoneVerify() {
       router.push('/dashboard');
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -51,10 +55,10 @@ export default function PhoneVerify() {
         </p>
         <form onSubmit={handleSubmit}>
           <input
-            type="text"
+            type="number"
             placeholder="Enter Your Code"
             className="input"
-            onChange={(e) => setAccessCode(e.target.value)}
+            onChange={(e) => {setAccessCode(e.target.value)}}
             disabled={loading}
           />
           {error && <span className="error">{error}</span>}

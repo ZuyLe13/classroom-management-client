@@ -36,6 +36,16 @@ input::placeholder {
   focus:outline-none focus:border-blue-500;
 }
 
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* For Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;
+}
 
 /* Button Styles */
 .btn {
