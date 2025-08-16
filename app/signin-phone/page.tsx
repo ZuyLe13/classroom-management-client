@@ -5,7 +5,7 @@ import { API_URL } from "@/constants/api";
 import { useRouter } from 'next/navigation';
 import { errorMessages } from "@/constants/error";
 
-export default function SignIn() {
+export default function SignInPhone() {
   const [phone, setPhone] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -30,7 +30,7 @@ export default function SignIn() {
       );
       localStorage.setItem('phone', trimmedPhone);
 
-      router.push('/phone-verify');
+      router.push('/verify-phone');
     } catch (error) {
       console.log(error);
     } finally {
