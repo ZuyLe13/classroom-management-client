@@ -57,14 +57,14 @@ export default function PhoneVerify() {
           <input
             type="number"
             placeholder="Enter Your Code"
-            className="input"
+            className="input mb-4"
             onChange={(e) => {setAccessCode(e.target.value)}}
             disabled={loading}
           />
-          {error && <span className="error">{error}</span>}
+          {error && <p className="error">{error}</p>}
           <button 
             type="submit" 
-            className="btn btn-primary" 
+            className="btn btn-primary w-full" 
             disabled={loading}>
             {loading ? 'Verifying...' : 'Submit'}
           </button>
