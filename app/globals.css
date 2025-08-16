@@ -15,7 +15,7 @@
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
-    --foreground: #ededed;
+    --foreground: #171a1f;
   }
 }
 
@@ -32,7 +32,7 @@ input::placeholder {
 
 /* Input Styles */
 .input {
-  @apply w-full p-3 mb-4 text-[#171717] border-2 border-[#e0e3e9] rounded-lg 
+  @apply w-full p-3 text-[#171717] border-2 border-[#e0e3e9] rounded-md 
   focus:outline-none focus:border-blue-500;
 }
 
@@ -49,11 +49,16 @@ input[type="number"] {
 
 /* Button Styles */
 .btn {
-  @apply h-[44px] text-white rounded-lg transition duration-200 cursor-pointer;
+  @apply h-[46px] px-4 text-white rounded-md transition duration-200 cursor-pointer
+  whitespace-nowrap;
 }
 
 .btn-primary {
-  @apply w-full bg-blue-600 hover:bg-blue-700 ;
+  @apply bg-blue-600 hover:bg-blue-700;
+}
+
+.btn-primary--outlined {
+  @apply bg-transparent border border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white;
 }
 
 /* Heading Styles */
@@ -70,13 +75,18 @@ h1, h2, h3 {
   @apply text-center text-sm text-[#565D6D];
 }
 
-span {
-  @apply block;
+a {
+  @apply cursor-pointer;
 }
 
 /* Error Styles */
 .error {
   @apply mb-4 text-sm text-red-500;
+}
+
+/* Form Styles */
+.form-group {
+  @apply mb-4;
 }
 
 /* Common Styles */
@@ -86,4 +96,8 @@ span {
 
 .auth-wrapper {
   @apply bg-white p-6 border border-[#d8d4d4] rounded-lg w-full max-w-md;
+}
+
+.input-filter {
+  @apply h-full;
 }
