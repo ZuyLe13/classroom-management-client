@@ -5,17 +5,17 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-export default function VerifyPhone() {
-  const [phone, setPhone] = useState('');
+export default function VerifyEmail() {
+  const [email, setEmail] = useState('');
   const [accessCode, setAccessCode] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const router = useRouter();
 
   useEffect(() => {
-    const storedPhone = localStorage.getItem('phone');
-    if (storedPhone) {
-      setPhone(storedPhone);
+    const storedEmail = localStorage.getItem('email');
+    if (storedEmail) {
+      setEmail(storedEmail);
     } else {
       router.push('/sign-in');
     }
@@ -36,7 +36,7 @@ export default function VerifyPhone() {
 
       await axios.post(
         `${API_URL}/auth/validateAccessCode`,
-        { phone, accessCode: trimmedAccessCode }
+        { email, accessCode: trimmedAccessCode }
       );
       router.push('/dashboard');
     } catch (error) {
@@ -49,9 +49,9 @@ export default function VerifyPhone() {
   return (
     <div className="auth-container">
       <div className="auth-wrapper">
-        <h2 className="section-heading">Phone Verification</h2>
+        <h2 className="section-heading">Email Verification</h2>
         <p className="mb-6 text-center text-[#a0a0a0]">
-          Please enter your code that send to your phone
+          Please enter your code that send to your email
         </p>
         <form onSubmit={handleSubmit}>
           <input
