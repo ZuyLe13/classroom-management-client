@@ -1,4 +1,6 @@
 "use client";
+import { API_URL } from '@/constants/api';
+import axios from 'axios';
 import React, { useState } from 'react';
 
 export default function StudentUpsert({ onClose }: { onClose: () => void }) {
@@ -9,10 +11,18 @@ export default function StudentUpsert({ onClose }: { onClose: () => void }) {
     role: '',
     address: ''
   });
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log(formData);
+    try {
+      setLoading(true);
+      await axios.post(`${API_URL}/addStudent`, formData);
+    } catch (error) {
+      console.error("Error creating student:", error);
+    } finally {
+      setLoading(false);
+    }
     onClose();
   };
 
@@ -64,7 +74,9 @@ export default function StudentUpsert({ onClose }: { onClose: () => void }) {
         </div>
 
         <div className='flex items-end justify-end mt-6'>
-          <button type="submit" className='btn btn-primary'>Create</button>
+          <button type="submit" className='btn btn-primary' disabled={loading}>
+            {loading ? "Creating..." : "Create"}
+          </button>
         </div>
       </form>
     </div>

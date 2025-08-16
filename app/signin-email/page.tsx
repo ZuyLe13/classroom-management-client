@@ -39,13 +39,13 @@ export default function SignInEmail() {
           <input
             type="email"
             placeholder="Your Email Address"
-            className="input"
+            className="input mb-4"
             onChange={(e) => setEmail(e.target.value)}
             disabled={loading}
           />
           <button 
             type="submit" 
-            className="btn btn-primary" 
+            className="btn btn-primary w-full" 
             disabled={loading}>
             {loading ? 'Processing...' : 'Next'}
           </button>
