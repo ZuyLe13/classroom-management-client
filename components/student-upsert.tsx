@@ -1,14 +1,20 @@
 "use client";
-import { addStudent } from '@/services/studentService';
+import { addStudent, Student, updateStudent } from '@/services/studentService';
 import React, { useState } from 'react';
 
-export default function StudentUpsert({ onClose }: { onClose: () => void }) {
+interface Props {
+  student?: Student;
+  onSuccess?: (student: Student) => void;
+  onClose: () => void;
+}
+
+export default function StudentUpsert({ student, onClose, onSuccess }: Props) {
   const [formData, setFormData] = useState({
-    name: '',
-    phone: '',
-    email: '',
-    role: '',
-    address: ''
+    name: student?.name || '',
+    phone: student?.phone || '',
+    email: student?.email || '',
+    role: student?.role || '',
+    address: student?.address || ''
   });
   const [loading, setLoading] = useState(false);
 
@@ -16,7 +22,15 @@ export default function StudentUpsert({ onClose }: { onClose: () => void }) {
     e.preventDefault();
     try {
       setLoading(true);
-      await addStudent(formData);
+      let savedStudent;
+      if (student) {
+        savedStudent = await updateStudent(student.phone, { ...formData });
+      } else {
+        savedStudent = await addStudent(formData);
+      }
+      if (onSuccess) {
+        onSuccess(savedStudent);
+      }
     } catch (error) {
       console.error("Error creating student:", error);
     } finally {
@@ -27,7 +41,7 @@ export default function StudentUpsert({ onClose }: { onClose: () => void }) {
 
   return (
     <div className='bg-white px-6 py-8 rounded-md'>
-      <h1 className='section-heading mb-4'>Create Student</h1>
+      <h1 className='section-heading mb-4'>{student ? "Edit Student" : "Create Student"}</h1>
       <form onSubmit={handleSubmit} >
         <div className='grid grid-cols-2 gap-6'>
           <div className='form-group'>
@@ -35,6 +49,7 @@ export default function StudentUpsert({ onClose }: { onClose: () => void }) {
             <input 
               type="text" 
               className='input' 
+              value={formData.name}
               onChange={(e) => {setFormData({...formData, name: e.target.value})}}
             />
           </div>
@@ -43,6 +58,7 @@ export default function StudentUpsert({ onClose }: { onClose: () => void }) {
             <input 
               type="text" 
               className='input' 
+              value={formData.phone}
               onChange={(e) => {setFormData({...formData, phone: e.target.value})}}
             />
           </div>
@@ -51,6 +67,7 @@ export default function StudentUpsert({ onClose }: { onClose: () => void }) {
             <input 
               type="text" 
               className='input' 
+              value={formData.email}
               onChange={(e) => {setFormData({...formData, email: e.target.value})}}
             />
           </div>
@@ -59,6 +76,7 @@ export default function StudentUpsert({ onClose }: { onClose: () => void }) {
             <input 
               type="text" 
               className='input' 
+              value={formData.role}
               onChange={(e) => {setFormData({...formData, role: e.target.value})}}
             />
           </div>
@@ -67,6 +85,7 @@ export default function StudentUpsert({ onClose }: { onClose: () => void }) {
             <input 
               type="text" 
               className='input' 
+              value={formData.address}
               onChange={(e) => {setFormData({...formData, address: e.target.value})}}
             />
           </div>
@@ -74,7 +93,9 @@ export default function StudentUpsert({ onClose }: { onClose: () => void }) {
 
         <div className='flex items-end justify-end mt-6'>
           <button type="submit" className='btn btn-primary' disabled={loading}>
-            {loading ? "Creating..." : "Create"}
+            {loading 
+              ? (student ? "Updating..." : "Creating...") 
+              : (student ? "Update" : "Create")}
           </button>
         </div>
       </form>

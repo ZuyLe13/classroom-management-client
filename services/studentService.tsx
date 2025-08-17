@@ -15,7 +15,7 @@ export const getStudents = async () => {
     return response.data.students;
   } catch (error) {
     console.error('Error fetching students:', error);
-    return [];
+    throw new Error('Failed to fetch students');
   }
 };
 
@@ -26,6 +26,25 @@ export const addStudent = async (student: Student) => {
     return response.data;
   } catch (error) {
     console.error('Error adding student:', error);
-    return null;
+    throw new Error('Failed to add student');
+  }
+};
+
+export const updateStudent = async (phone: string, student: Student) => {
+  try {
+    const response = await axios.put(`${API_URL}/editStudent/${phone}`, student);
+    return response.data;
+  } catch (error) {
+    console.error('Error updating student:', error);
+    throw new Error('Failed to update student');
+  }
+}
+
+export const deleteStudent = async (phone: string) => {
+  try {
+    await axios.delete(`${API_URL}/student/${phone}`);
+  } catch (error) {
+    console.error('Error deleting student:', error);
+    throw new Error('Failed to delete student');
   }
 };

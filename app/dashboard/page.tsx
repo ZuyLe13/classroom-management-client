@@ -1,6 +1,6 @@
 "use client";
 import StudentUpsert from '@/components/student-upsert';
-import { getStudents } from '@/services/studentService';
+import { deleteStudent, getStudents } from '@/services/studentService';
 import React, { useEffect, useState } from 'react'
 
 interface Student {
@@ -8,12 +8,15 @@ interface Student {
   email: string;
   isVerified: boolean;
   phone: string;
+  role: string;
+  address: string;
 }
 
 export default function Dashboard() {
   const [showModal, setShowModal] = useState(false);
   const [students, setStudents] = useState<Student[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
   
   useEffect(() => {
     getStudents()
@@ -25,7 +28,33 @@ export default function Dashboard() {
       console.error('Error fetching students:', error);
       setLoading(false);
     });
-  }, [students]);
+  }, []);
+
+  const fetchStudents = async () => {
+    setLoading(true);
+    try {
+      const data = await getStudents();
+      setStudents(data);
+    } catch (error) {
+      console.error('Error fetching students:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDeleteStudent = async (phone: string) => {
+    if (confirm("Are you sure you want to delete this student?")) {
+      setLoading(true);
+      try {
+        await deleteStudent(phone);
+        fetchStudents();
+      } catch (error) {
+        console.error('Error deleting student:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
 
   if (loading) return <p>Loading...</p>;
 
@@ -52,7 +81,12 @@ export default function Dashboard() {
           <div className="flex justify-between items-center mb-6">
             <h1 className="text-2xl font-semibold">Manage Students</h1>
             <div className="flex items-center gap-2">
-              <button className="btn btn-primary--outlined" onClick={() => setShowModal(true)}>
+              <button 
+                className="btn btn-primary--outlined" 
+                onClick={() => {
+                  setShowModal(true);
+                  setSelectedStudent(null);
+                }}>
                 + Add Student
               </button>
               <input
@@ -87,10 +121,17 @@ export default function Dashboard() {
                       </span>
                     </td>
                     <td className="px-4 py-3 flex gap-2">
-                      <button className="px-3 py-1 rounded bg-blue-500 text-white hover:bg-blue-600">
+                      <button 
+                        className="px-3 py-1 rounded bg-blue-500 text-white hover:bg-blue-600"
+                        onClick={() => {
+                          setShowModal(true);
+                          setSelectedStudent(s);
+                        }}>
                         Edit
                       </button>
-                      <button className="px-3 py-1 rounded bg-red-500 text-white hover:bg-red-600">
+                      <button 
+                        className="px-3 py-1 rounded bg-red-500 text-white hover:bg-red-600"
+                        onClick={() => handleDeleteStudent(s.phone)}>
                         Delete
                       </button>
                     </td>
@@ -110,7 +151,14 @@ export default function Dashboard() {
           ></div>
 
           <div className="relative z-10 max-w-[800px] mx-auto mt-[200px]">
-            <StudentUpsert onClose={() => setShowModal(false)} />
+            <StudentUpsert 
+              onClose={() => setShowModal(false)}
+              onSuccess={() => {
+                setShowModal(false);
+                fetchStudents();
+              }}
+              student={selectedStudent ?? undefined}
+            />
           </div>
         </div>
       )}
