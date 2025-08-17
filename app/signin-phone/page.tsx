@@ -1,9 +1,8 @@
 "use client";
-import axios from "axios";
 import { useState } from "react";
-import { API_URL } from "@/constants/api";
 import { useRouter } from 'next/navigation';
 import { errorMessages } from "@/constants/error";
+import { createAccessCode } from "@/services/authService";
 
 export default function SignInPhone() {
   const [phone, setPhone] = useState('');
@@ -11,7 +10,7 @@ export default function SignInPhone() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const trimmedPhone = phone.replace(/\s+/g, '');
 
@@ -23,13 +22,7 @@ export default function SignInPhone() {
     try {
       setLoading(true);
       setError('');
-
-      await axios.post(
-        `${API_URL}/auth/createAccessCode`,
-        { phone: trimmedPhone }
-      );
-      localStorage.setItem('phone', trimmedPhone);
-
+      await createAccessCode(trimmedPhone);
       router.push('/verify-phone');
     } catch (error) {
       console.log(error);

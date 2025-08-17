@@ -1,6 +1,5 @@
 "use client";
-import { API_URL } from '@/constants/api';
-import axios from 'axios';
+import { setUpAccount, signIn, verifyToken } from '@/services/authService';
 import { useRouter, useSearchParams } from 'next/navigation';
 import React, { useEffect, useState } from 'react'
 
@@ -8,6 +7,8 @@ export default function SetupAccount() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [checkingToken, setCheckingToken] = useState(true);
   const router = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams.get('token');
@@ -16,23 +17,25 @@ export default function SetupAccount() {
     setUsername('');
     setPassword('');
     if (token) {
-      axios.get(`${API_URL}/verifySetupToken?token=${token}`)
-      .catch(error => {
-        console.error('Error verifying token:', error);
-      });
+      (async () => {
+        const verifySetupToken = await verifyToken(token);
+        setError(verifySetupToken || '');
+        setCheckingToken(false);
+      })();
+    } else {
+      setCheckingToken(false);
     }
-  }, [token, router]);
+  }, [token]);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       setLoading(true);
       if (token) {
-        await axios.post(`${API_URL}/setupAccount`, { token, username, password });
+        await setUpAccount({ username, password, token });
         router.push('/setup-account');
-        return;
       }
-      await axios.post(`${API_URL}/signIn`, { username, password });
+      await signIn({ username, password });
       router.push('/dashboard');
     } catch (error) {
       console.log(error);
@@ -40,6 +43,9 @@ export default function SetupAccount() {
       setLoading(false);
     }
   }
+
+  if (checkingToken) return <p>Checking token...</p>;
+  if (error) return <p className="text-red-500">{error}</p>;
 
   return (
     <div className="auth-container">

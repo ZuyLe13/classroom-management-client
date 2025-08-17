@@ -1,6 +1,5 @@
 "use client";
-import { API_URL } from '@/constants/api';
-import axios from 'axios';
+import { addStudent } from '@/services/studentService';
 import React, { useState } from 'react';
 
 export default function StudentUpsert({ onClose }: { onClose: () => void }) {
@@ -17,7 +16,7 @@ export default function StudentUpsert({ onClose }: { onClose: () => void }) {
     e.preventDefault();
     try {
       setLoading(true);
-      await axios.post(`${API_URL}/addStudent`, formData);
+      await addStudent(formData);
     } catch (error) {
       console.error("Error creating student:", error);
     } finally {

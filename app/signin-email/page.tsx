@@ -1,6 +1,5 @@
 "use client";
-import { API_URL } from '@/constants/api';
-import axios from 'axios';
+import { loginWithEmail } from '@/services/authService';
 import { useRouter } from "next/navigation";
 import React, { useState } from 'react'
 
@@ -9,17 +8,12 @@ export default function SignInEmail() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("test")
 
     try {
-      console.log("test")
-
       setLoading(true);
-      await axios.post(`${API_URL}/auth/loginEmail`, { email });
-      localStorage.setItem('email', email);
-
+      await loginWithEmail(email);
       router.push('/verify-email');
     } catch (error) {
       console.log(error);

@@ -1,7 +1,6 @@
 "use client";
-import { API_URL } from "@/constants/api";
 import { errorMessages } from "@/constants/error";
-import axios from "axios";
+import { validateAccessCodePhone } from "@/services/authService";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -21,7 +20,7 @@ export default function VerifyPhone() {
     }
   }, [router]);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const trimmedAccessCode = accessCode.replace(/\s+/g, '');
 
@@ -33,11 +32,7 @@ export default function VerifyPhone() {
     try {
       setLoading(true);
       setError('');
-
-      await axios.post(
-        `${API_URL}/auth/validateAccessCode`,
-        { phone, accessCode: trimmedAccessCode }
-      );
+      await validateAccessCodePhone(phone, trimmedAccessCode);
       router.push('/dashboard');
     } catch (error) {
       console.log(error);
