@@ -1,16 +1,33 @@
 "use client";
 import StudentUpsert from '@/components/student-upsert';
-import React, { useState } from 'react'
+import { getStudents } from '@/services/studentService';
+import React, { useEffect, useState } from 'react'
+
+interface Student {
+  name: string;
+  email: string;
+  isVerified: boolean;
+  phone: string;
+}
 
 export default function Dashboard() {
   const [showModal, setShowModal] = useState(false);
+  const [students, setStudents] = useState<Student[]>([]);
+  const [loading, setLoading] = useState(true);
+  
+  useEffect(() => {
+    getStudents()
+    .then(data => {
+      setStudents(data);
+      setLoading(false);
+    })
+    .catch(error => {
+      console.error('Error fetching students:', error);
+      setLoading(false);
+    });
+  }, [students]);
 
-  const students = [
-    { id: 1, name: "Student 1", email: "123@gmail.com", status: "Active" },
-    { id: 2, name: "Student 2", email: "123@gmail.com", status: "Active" },
-    { id: 3, name: "Student 3", email: "123@gmail.com", status: "Active" },
-    { id: 4, name: "Student 4", email: "123@gmail.com", status: "Active" },
-  ];
+  if (loading) return <p>Loading...</p>;
 
   return (
     <div>
@@ -61,12 +78,12 @@ export default function Dashboard() {
               </thead>
               <tbody>
                 {students.map((s) => (
-                  <tr key={s.id} className="border-t border-[#F1F1F1]">
+                  <tr key={s.phone} className="border-t border-[#F1F1F1]">
                     <td className="px-4 py-3">{s.name}</td>
                     <td className="px-4 py-3">{s.email}</td>
                     <td className="px-4 py-3">
                       <span className="px-3 py-1 rounded bg-green-100 text-green-700">
-                        {s.status}
+                        {s.isVerified ? "Active" : "Inactive"}
                       </span>
                     </td>
                     <td className="px-4 py-3 flex gap-2">

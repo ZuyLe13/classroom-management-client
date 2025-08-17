@@ -1,7 +1,6 @@
 "use client";
-import { API_URL } from "@/constants/api";
 import { errorMessages } from "@/constants/error";
-import axios from "axios";
+import { validateAccessCodeEmail } from "@/services/authService";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -21,7 +20,7 @@ export default function VerifyEmail() {
     }
   }, [router]);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const trimmedAccessCode = accessCode.replace(/\s+/g, '');
 
@@ -34,10 +33,7 @@ export default function VerifyEmail() {
       setLoading(true);
       setError('');
 
-      await axios.post(
-        `${API_URL}/auth/validateAccessCode`,
-        { email, accessCode: trimmedAccessCode }
-      );
+      await validateAccessCodeEmail(email, trimmedAccessCode);
       router.push('/dashboard');
     } catch (error) {
       console.log(error);
