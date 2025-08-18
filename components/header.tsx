@@ -13,7 +13,7 @@ export default function Header() {
   }
 
   return (
-    <div className="fixed top-0 left-0 right-0 flex justify-end px-8 py-4 border-b border-[#dfdede] bg-white">
+    <div className="fixed top-0 left-0 right-0 flex justify-end px-8 py-4 border-b border-[#dfdede] bg-white z-20">
       <button
         className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center font-semibold text-gray-700"
         onClick={() => setShowDropdown(!showDropdown)}
