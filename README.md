@@ -1,36 +1,53 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Classroom Management - Client
 
-## Getting Started
+This is the frontend (client) part of the Classroom Management system, built with Next.js and TypeScript.
 
-First, run the development server:
+## Directory structure
+
+- **app/**: Contains the main pages of the application (according to the App Router structure of Next.js)
+- `dashboard/`, `manage-lessons/`, `messages/`, `sign-in/`, ...: Separate functional pages
+- `layout.tsx`: Overall layout for the entire app
+- `globals.css`: Global CSS file
+- **components/**: Shared components such as `header`, `sidebar`, `authGuard`, ...
+- **constants/**: Shared constants (API endpoint, error message, ...)
+- **services/**: Contains API calls (authService, instructorService, studentService)
+- **public/**: Contains static files (images, icons, ...)
+- **.next/**: Next.js's automatic build directory (not needed)
+- **package.json**: Project information and dependent packages
+- **tsconfig.json**: TypeScript configuration
+- **next.config.ts**: Next.js configuration
+- **postcss.config.mjs**: PostCSS configuration
+- **eslint.config.mjs**: ESLint configuration
+
+## Installation
+
+1. **Requirements:**
+
+- Node.js >= 18
+- npm >= 9 (or yarn/pnpm)
+
+2. **Install package:**
+
+```bash
+cd client
+npm install
+```
+
+## Run the application
+
+- **Run in development mode:**
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
+The application will run at [http://localhost:3000](http://localhost:3000)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Note
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- Make sure the backend is running before using features that require the API.
+- The API endpoint configuration can be edited in `constants/api.ts`.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+For any questions or contributions, please contact:
+- Email: leanhduy131103@gmail.com
