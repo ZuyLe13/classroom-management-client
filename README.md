@@ -54,8 +54,11 @@ For any questions or contributions, please contact:
 
 ## Screenshots of application
 
-![Screenshot 3]
-![Screenshot 4]
+**Auth Page:**
+![Screenshot 1](https://github.com/user-attachments/assets/a24b8e10-f3e8-4c62-912c-70dcdc8ea73e)
+![Screenshot 2](https://github.com/user-attachments/assets/1065c682-cd48-46db-a8ef-a6e14121a356)
+![Screenshot 3](https://github.com/user-attachments/assets/eb00796d-bfb3-4748-b487-1e1ae973ca7c)
+![Screenshot 4](https://github.com/user-attachments/assets/160b4f78-ac91-42e5-a7e4-acc9d5fab9fb)
 
 **Student Management:**
 Manage students: add, edit, delete, and view the student list.
