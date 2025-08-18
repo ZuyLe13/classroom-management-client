@@ -40,7 +40,7 @@ npm install
 ```bash
 npm run dev
 ```
-The application will run at [http://localhost:3000](http://localhost:3000)
+The application will run at [http://localhost:3000/dashboard](http://localhost:3000/dashboard)
 
 ## Note
 
