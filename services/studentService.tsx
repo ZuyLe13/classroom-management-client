@@ -22,7 +22,6 @@ export const getStudents = async () => {
 export const addStudent = async (student: Student) => {
   try {
     const response = await axios.post(`${API_URL}/addStudent`, student);
-    console.log(response.data);
     return response.data;
   } catch (error) {
     console.error('Error adding student:', error);

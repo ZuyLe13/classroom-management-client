@@ -42,7 +42,8 @@ export const setUpAccount = async (data: object) => {
 
 export const signIn = async (data: object) => {
   try {
-    await axios.post(`${API_URL}/signin`, data);
+    const user = await axios.post(`${API_URL}/signin`, data);
+    return user.data;
   } catch (error) {
     console.error('Error signing in:', error);
     throw new Error('Sign in failed');

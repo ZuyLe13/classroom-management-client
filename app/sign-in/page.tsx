@@ -16,6 +16,7 @@ export default function SetupAccount() {
   useEffect(() => {
     setUsername('');
     setPassword('');
+
     if (token) {
       (async () => {
         const verifySetupToken = await verifyToken(token);
@@ -33,9 +34,12 @@ export default function SetupAccount() {
       setLoading(true);
       if (token) {
         await setUpAccount({ username, password, token });
-        router.push('/setup-account');
+        router.push('/sign-in');
+        return;
       }
-      await signIn({ username, password });
+      const userData = await signIn({ username, password });
+      localStorage.setItem('token', userData.token ?? '');
+      localStorage.setItem('user', JSON.stringify(userData.userData));
       router.push('/dashboard');
     } catch (error) {
       console.log(error);
