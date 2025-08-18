@@ -91,7 +91,10 @@ export default function StudentUpsert({ student, onClose, onSuccess }: Props) {
           </div>
         </div>
 
-        <div className='flex items-end justify-end mt-6'>
+        <div className='flex items-end justify-end gap-4 mt-6'>
+          <button type="button" className='btn btn-closed' onClick={onClose}>
+            Cancel
+          </button>
           <button type="submit" className='btn btn-primary' disabled={loading}>
             {loading 
               ? (student ? "Updating..." : "Creating...") 

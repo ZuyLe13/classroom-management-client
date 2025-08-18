@@ -5,7 +5,6 @@ import ProtectedRoute from '@/components/protectedRoute';
 import Sidebar from '@/components/sidebar';
 import StudentUpsert from '@/components/student-upsert';
 import { deleteStudent, getStudents } from '@/services/studentService';
-import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react'
 
 interface Student {
@@ -22,30 +21,17 @@ export default function Dashboard() {
   const [students, setStudents] = useState<Student[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
-  const [showDropdown, setShowDropdown] = useState(false);
-  const [user, setUser] = useState<Student | null>(null);
-  const router = useRouter();
 
   useEffect(() => {
-    const userString = localStorage.getItem("user");
-    setUser(userString ? JSON.parse(userString) : null);
-
-    getStudents()
-    .then(data => {
-      setStudents(data);
-      setLoading(false);
-    })
-    .catch(error => {
-      console.error('Error fetching students:', error);
-      setLoading(false);
-    });
+    loadStudents();
   }, []);
 
-  const fetchStudents = async () => {
+  const loadStudents = async () => {
     setLoading(true);
     try {
       const data = await getStudents();
-      setStudents(data);
+      const onlyStudents = data.filter((s: Student) => s.role === "student");
+      setStudents(onlyStudents);
     } catch (error) {
       console.error('Error fetching students:', error);
     } finally {
@@ -54,11 +40,11 @@ export default function Dashboard() {
   };
 
   const handleDeleteStudent = async (phone: string) => {
-    if (confirm("Are you sure you want to delete this student?")) {
+    if (confirm("Are you want to delete this student?")) {
       setLoading(true);
       try {
         await deleteStudent(phone);
-        fetchStudents();
+        loadStudents();
       } catch (error) {
         console.error('Error deleting student:', error);
       } finally {
@@ -105,6 +91,7 @@ export default function Dashboard() {
               <thead>
                 <tr className="bg-gray-50">
                   <th className="px-4 py-3">Student Name</th>
+                  <th className="px-4 py-3">Phone</th>
                   <th className="px-4 py-3">Email</th>
                   <th className="px-4 py-3">Status</th>
                   <th className="px-4 py-3">Action</th>
@@ -114,6 +101,7 @@ export default function Dashboard() {
                 {students.map((s) => (
                   <tr key={s.phone} className="border-t border-[#F1F1F1]">
                     <td className="px-4 py-3">{s.name}</td>
+                    <td className="px-4 py-3">{s.phone}</td>
                     <td className="px-4 py-3">{s.email}</td>
                     <td className="px-4 py-3">
                       <span className="px-3 py-1 rounded bg-green-100 text-green-700">
@@ -121,19 +109,15 @@ export default function Dashboard() {
                       </span>
                     </td>
                     <td className="px-4 py-3 flex gap-2">
-                      <button
-                        className="px-3 py-1 rounded bg-blue-500 text-white hover:bg-blue-600"
-                        onClick={() => {
-                          setShowModal(true);
-                          setSelectedStudent(s);
-                        }}
-                      >
+                      <button className="btn--sm btn-primary"
+                                onClick={() => {
+                                  setShowModal(true);
+                                  setSelectedStudent(s);
+                                }}>
                         Edit
                       </button>
-                      <button
-                        className="px-3 py-1 rounded bg-red-500 text-white hover:bg-red-600"
-                        onClick={() => handleDeleteStudent(s.phone)}
-                      >
+                      <button className="btn--sm btn-delete"
+                              onClick={() => handleDeleteStudent(s.phone)}>
                         Delete
                       </button>
                     </td>
@@ -154,7 +138,7 @@ export default function Dashboard() {
                 onClose={() => setShowModal(false)}
                 onSuccess={() => {
                   setShowModal(false);
-                  fetchStudents();
+                  loadStudents();
                 }}
                 student={selectedStudent ?? undefined}
               />

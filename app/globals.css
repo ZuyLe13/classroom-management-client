@@ -53,8 +53,29 @@ input[type="number"] {
   whitespace-nowrap;
 }
 
+.btn--sm {
+  @apply h-[34px] px-3 text-white rounded-sm transition duration-200 cursor-pointer
+  whitespace-nowrap;
+}
+
 .btn-primary {
   @apply bg-blue-600 hover:bg-blue-700;
+}
+
+.btn-closed {
+  @apply text-black bg-gray-200 hover:bg-gray-300 cursor-pointer;
+}
+
+.btn-delete {
+  @apply bg-red-500 hover:bg-red-600;
+}
+
+.btn-edit {
+  @apply bg-blue-500 hover:bg-blue-600;
+}
+
+.btn-assign {
+  @apply bg-green-500 hover:bg-green-600;
 }
 
 .btn-primary--outlined {
