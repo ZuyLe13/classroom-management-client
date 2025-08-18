@@ -1,28 +1,92 @@
 "use client";
-import { useState } from "react";
-import { Student } from "@/services/studentService";
+import { useEffect, useState } from "react";
+import { getStudents, Student } from "@/services/studentService";
+import LessonUpsert from "./lesson-upsert";
+import { assignLessonToStudent, deleteLesson, getAllLessons } from "@/services/instructorService";
 
 interface Lesson {
   id: string;
   title: string;
   description: string;
-  assignedTo?: string;
+  assignedTos?: string[];
 }
 
-interface Props {
-  lessons: Lesson[];
-  students: Student[];
-  handleDeleteLesson: (id: string) => void;
-}
-
-export default function LessonsInstructor({
-  lessons,
-  students,
-  handleDeleteLesson,
-}: Props) {
+export default function LessonsInstructor() {
+  const [lessons, setLessons] = useState<Lesson[]>([]);
+  const [students, setStudents] = useState<Student[]>([]);
   const [showModal, setShowModal] = useState(false);
   const [showAssignModal, setShowAssignModal] = useState(false);
   const [selectedLesson, setSelectedLesson] = useState<Lesson | null>(null);
+  const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    loadLessons();
+    loadStudents();
+  }, []);
+
+  const loadLessons = async () => {
+    setLoading(true);
+    try {
+      const data = await getAllLessons();
+      setLessons(data);
+    } catch (error) {
+      console.error('Error fetching lessons:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const loadStudents = async () => {
+    setLoading(true);
+    try {
+      const data = await getStudents();
+      setStudents(data);
+    } catch (error) {
+      console.error('Error fetching students:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    try {
+      setLoading(true);
+      if (selectedLesson) {
+        await assignLessonToStudent(selectedLesson.id, selectedStudent?.phone || "");
+        await loadLessons();
+      }
+    } catch (error) {
+      console.error('Error assigning lesson to student:', error);
+    } finally {
+      setLoading(false);
+    }
+    setShowAssignModal(false);
+  };
+
+  const handleOnChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedValue = e.target.value;
+    const student = students.find((s) => s.phone === selectedValue);
+    setSelectedStudent(student || null);
+  };
+
+  const handleDeleteLesson = async (lessonId: string) => {
+    if (confirm("Are you want to delete this lesson?")) {
+      try {
+        setLoading(true);
+        await deleteLesson(lessonId);
+        await loadLessons();
+      } catch (error) {
+        console.error('Error deleting lesson:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
+
+  if (loading) return <p>Loading...</p>;
 
   return (
     <section className="flex-1 p-8">
@@ -33,8 +97,7 @@ export default function LessonsInstructor({
           onClick={() => {
             setShowModal(true);
             setSelectedLesson(null);
-          }}
-        >
+          }}>
           + Add Lesson
         </button>
       </div>
@@ -57,30 +120,27 @@ export default function LessonsInstructor({
               <tr key={l.id} className="border-t border-gray-200">
                 <td className="px-4 py-3">{l.title}</td>
                 <td className="px-4 py-3">{l.description}</td>
-                <td className="px-4 py-3">{l.assignedTo || "-"}</td>
+                <td className="px-4 py-3 truncate">{l.assignedTos?.join(", ") || "-"}</td>
                 <td className="px-4 py-3 flex gap-2">
                   <button
-                    className="px-3 py-1 rounded bg-green-500 text-white"
+                    className="btn--sm btn-assign"
                     onClick={() => {
                       setShowAssignModal(true);
                       setSelectedLesson(l);
-                    }}
-                  >
+                    }}>
                     Assign
                   </button>
                   <button
-                    className="px-3 py-1 rounded bg-blue-500 text-white"
+                    className="btn--sm btn-edit"
                     onClick={() => {
                       setShowModal(true);
                       setSelectedLesson(l);
-                    }}
-                  >
+                    }}>
                     Edit
                   </button>
                   <button
-                    className="px-3 py-1 rounded bg-red-500 text-white"
-                    onClick={() => handleDeleteLesson(l.id)}
-                  >
+                    className="btn--sm btn-delete"
+                    onClick={() => handleDeleteLesson(l.id)}>
                     Delete
                   </button>
                 </td>
@@ -93,49 +153,17 @@ export default function LessonsInstructor({
       {/* Modal Add/Edit */}
       {showModal && (
         <div className="fixed inset-0 z-50">
-          <div
-            className="absolute inset-0 bg-slate-300 opacity-50"
-            onClick={() => setShowModal(false)}
-          ></div>
-          <div className="relative z-10 max-w-[600px] mx-auto mt-[200px] bg-white p-6 rounded-lg shadow">
-            <h2 className="text-xl font-semibold mb-4">
-              {selectedLesson ? "Edit Lesson" : "Add Lesson"}
-            </h2>
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                alert(selectedLesson ? "Lesson updated!" : "Lesson added!");
+          <div className="absolute inset-0 bg-slate-300 opacity-50"
+              onClick={() => setShowModal(false)}></div>
+          <div className="relative z-10 max-w-[800px] mx-auto mt-[200px]">
+            <LessonUpsert
+              onClose={() => setShowModal(false)}
+              onSuccess={() => {
                 setShowModal(false);
+                loadLessons();
               }}
-              className="space-y-4"
-            >
-              <input
-                type="text"
-                placeholder="Title"
-                defaultValue={selectedLesson?.title}
-                className="w-full border px-3 py-2 rounded"
-              />
-              <textarea
-                placeholder="Description"
-                defaultValue={selectedLesson?.description}
-                className="w-full border px-3 py-2 rounded"
-              />
-              <div className="flex justify-end gap-2">
-                <button
-                  type="button"
-                  className="px-4 py-2 rounded bg-gray-200"
-                  onClick={() => setShowModal(false)}
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2 rounded bg-blue-500 text-white"
-                >
-                  Save
-                </button>
-              </div>
-            </form>
+              lesson={selectedLesson ?? undefined}
+            />
           </div>
         </div>
       )}
@@ -152,31 +180,30 @@ export default function LessonsInstructor({
               Assign &quot;{selectedLesson.title}&quot; to Student
             </h2>
             <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                alert("Lesson assigned!");
-                setShowAssignModal(false);
-              }}
+              onSubmit={handleSubmit}
               className="space-y-4"
             >
-              <select className="w-full border px-3 py-2 rounded">
-                {students.map((s) => (
-                  <option key={s.email} value={s.email}>
-                    {s.name} ({s.email})
-                  </option>
+              <select
+                className="input"
+                value={selectedStudent?.phone || ""}
+                onChange={handleOnChange}
+              >
+                <option value="" disabled>Select a student</option>
+                {students.filter((s) => s.role === "student").map((s) => (
+                  <option key={s.phone} value={s.phone}>{s.name}</option>
                 ))}
               </select>
               <div className="flex justify-end gap-2">
                 <button
                   type="button"
-                  className="px-4 py-2 rounded bg-gray-200"
+                  className="btn btn-closed"
                   onClick={() => setShowAssignModal(false)}
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 rounded bg-green-500 text-white"
+                  className="btn btn-primary"
                 >
                   Assign
                 </button>

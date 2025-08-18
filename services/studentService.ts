@@ -47,3 +47,23 @@ export const deleteStudent = async (phone: string) => {
     throw new Error('Failed to delete student');
   }
 };
+
+export const getStudentLessons = async (phone: string) => {
+  try {
+    const response = await axios.get(`${API_URL}/myLessons/${phone}`);
+    return response.data.lessons;
+  } catch (error) {
+    console.error('Error fetching student lessons:', error);
+    throw new Error('Failed to fetch student lessons');
+  }
+};
+
+export const updateStudentLesson = async (phone: string, lessonId: string, completed: boolean) => {
+  try {
+    const response = await axios.put(`${API_URL}/myLessons/${phone}/${lessonId}`, { completed });
+    return response.data;
+  } catch (error) {
+    console.error('Error updating student lesson:', error);
+    throw new Error('Failed to update student lesson');
+  }
+};
