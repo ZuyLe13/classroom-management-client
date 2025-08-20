@@ -32,7 +32,10 @@ export default function VerifyPhone() {
     try {
       setLoading(true);
       setError('');
-      await validateAccessCodePhone(phone, trimmedAccessCode);
+      const token = await validateAccessCodePhone(phone, trimmedAccessCode);
+      if (token) {
+        localStorage.setItem('token', token);
+      }
       router.push('/dashboard');
     } catch (error) {
       console.log(error);

@@ -45,3 +45,13 @@ export const deleteLesson = async (lessonId: string) => {
     throw new Error('Failed to delete lesson');
   }
 };
+
+export const updateLesson = async (lesson: Lesson) => {
+  try {
+    const response = await axios.put(`${API_URL}/editLesson/${lesson.id}`, lesson);
+    return response.data.lesson;
+  } catch (error) {
+    console.error('Error updating lesson:', error);
+    throw new Error('Failed to update lesson');
+  }
+};
