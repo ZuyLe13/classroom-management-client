@@ -1,6 +1,6 @@
 "use client";
 
-import { createLesson } from "@/services/instructorService";
+import { createLesson, updateLesson } from "@/services/instructorService";
 import { useState } from "react";
 
 export interface Lesson {
@@ -29,9 +29,14 @@ export default function LessonUpsert({ onClose, lesson, onSuccess }: Props) {
     e.preventDefault();
     try {
       setLoading(true);
-      const newLesson = await createLesson(form);
+      let savedLesson;
+      if (lesson) {
+        savedLesson = await updateLesson(form);
+      } else {
+        savedLesson = await createLesson(form);
+      }
       if (onSuccess) {
-        onSuccess(newLesson);
+        onSuccess(savedLesson);
       }
     } catch (error) {
       console.error("Error saving lesson:", error);

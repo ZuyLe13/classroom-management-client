@@ -71,7 +71,10 @@ export const validateAccessCodeEmail = async (email: string, accessCode: string)
 
 export const validateAccessCodePhone = async (phone: string, accessCode: string) => {
   try {
-    await axios.post(`${API_URL}/auth/validateAccessCode`, { phone, accessCode });
+    const res = await axios.post(`${API_URL}/auth/validateAccessCode`, { phone, accessCode });
+    if (res.data.token) {
+      return res.data.token;
+    }
   } catch (error) {
     console.error('Error validating access code:', error);
     throw new Error('Validate access code failed');
