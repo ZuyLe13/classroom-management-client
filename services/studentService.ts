@@ -7,6 +7,7 @@ export interface Student {
   phone: string;
   role: string;
   address: string;
+  message?: string;
 }
 
 export const getStudents = async () => {
